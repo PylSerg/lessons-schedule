@@ -4,41 +4,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <!-- Назва сторінки -->
     <title>Розклад уроків</title>
 
-    <!-- Стилізація -->
     <style>
         body {
-            /* колір фону */
             background-color: #1c1c1c;
-
-            /* колір тексту */
             color: #ccc;
-
-            /* розмір шрифту */
             font-size: 16px;
-
-            /* жирність шрифту */
             font-weight: 700;
-
-            /* міжрядковий інтервал */
             line-height: 1.5;
-
-            /* вирівнювання тексту */
             text-align: center;
-
-            /* шрифт */
             font-family: Arial, Helvetica, sans-serif;
 
-            /* відступи */
-            display: flex;
-            justify-content: center;
-            align-items: center;
             height: 100vh;
             margin: 0;
             padding: 0;
+        }
+
+        th {
+            padding: 10px 30px;
+            border: 1px solid #444;
+            border-radius: 5px;
+            background-color: #444;
+        }
+
+        td {
+            padding: 10px;
+            border: 1px solid #444;
+            border-radius: 5px;
+        }
+
+        #root {
+            display: flex;
+            flex-direction: column;
+            justify-content: start;
+            align-items: center;
+            height: 100%;
         }
     </style>
 </head>
@@ -47,11 +48,8 @@
     <div id="root">Перевірка...</div>
 
     <script>
-
         // Розклад уроків
         const schedule = {
-
-            // Понеділок
             Monday: {
                 L0: "",
                 L1: "",
@@ -64,7 +62,6 @@
                 L8: "",
             },
 
-            // Вівторок
             Tuesday: {
                 L0: "",
                 L1: "",
@@ -77,7 +74,6 @@
                 L8: "",
             },
 
-            // Середа
             Wednesday: {
                 L0: "",
                 L1: "",
@@ -90,7 +86,6 @@
                 L8: "",
             },
 
-            // Четвер
             Thursday: {
                 L0: "",
                 L1: "",
@@ -103,7 +98,6 @@
                 L8: "",
             },
 
-            // П'ятниця
             Friday: {
                 L0: "",
                 L1: "",
@@ -116,7 +110,6 @@
                 L8: "",
             },
 
-            // Субота
             Saturday: {
                 L0: "",
                 L1: "",
@@ -129,7 +122,6 @@
                 L8: "",
             },
 
-            // Неділя
             Sunday: {
                 L0: "",
                 L1: "",
@@ -157,8 +149,9 @@
             L8: ["20", "05", "20", "35"],
         };
 
+        let is_schedule_shown = true; // Змінна для відстеження стану розкладу
+        let checker; // Змінна для зберігання інтервалу перевірки уроків
 
-        // Скрипт для відображення розкладу уроків
         const ref_root = document.getElementById("root");
 
         const date = new Date();
@@ -168,46 +161,161 @@
         let number_lesson = 0;
         let lesson = "L" + number_lesson;
 
-        const checker = setInterval(() => {
-            ref_root.style.backgroundColor = "transparent";
+        function showSchedule() {
+            ref_root.style.justifyContent = "start";
+            ref_root.style.color = "#ccc";
 
-            while (schedule[current_day][lesson] === "") {
-                number_lesson++;
-                lesson = "L" + number_lesson;
-            }
+            ref_root.innerHTML = `
+		<table style="margin:10px">
+			<tr>
+				<th>Урок</th>
+				<th>Назва</th>
+				<th>Початок</th>
+				<th>Кінець</th>
+			</tr>
 
-            if (number_lesson == Object.keys(schedule[current_day]).length) {
-                ref_root.innerHTML = "Уроків на сьогодні немає";
-                clearInterval(checker);
-                return;
-            }
+			<tr>
+				<td>0</td>
+				<td style="text-align:left">${schedule[current_day].L0}</td>
+				<td>${bells.L0[0]}:${bells.L0[1]}</td>
+				<td>${bells.L0[2]}:${bells.L0[3]}</td>
+			</tr>
 
-            const date_now = new Date();
-            const time_now = date_now.getHours() * 60 + date_now.getMinutes();
-            const lesson_start = Number(bells[lesson][0]) * 60 + Number(bells[lesson][1]);
-            const lesson_end = Number(bells[lesson][2]) * 60 + Number(bells[lesson][3]);
+			<tr>
+				<td>1</td>
+				<td style="text-align:left">${schedule[current_day].L1}</td>
+				<td>${bells.L1[0]}:${bells.L1[1]}</td>
+				<td>${bells.L1[2]}:${bells.L1[3]}</td>
+			</tr>
 
-            if (time_now < lesson_start) {
-                ref_root.innerHTML = `
-			${schedule[current_day][lesson]} о ${bells[lesson][0]}:${bells[lesson][1]} 
-			<br> 
-			До початку уроку: ${lesson_start - time_now} хв
+			<tr>
+				<td>2</td>
+				<td style="text-align:left">${schedule[current_day].L2}</td>
+				<td>${bells.L2[0]}:${bells.L2[1]}</td>
+				<td>${bells.L2[2]}:${bells.L2[3]}</td>
+			</tr>	
+
+			<tr>
+				<td>3</td>
+				<td style="text-align:left">${schedule[current_day].L3}</td>
+				<td>${bells.L3[0]}:${bells.L3[1]}</td>
+				<td>${bells.L3[2]}:${bells.L3[3]}</td>
+			</tr>	
+
+			<tr>
+				<td>4</td>
+				<td style="text-align:left">${schedule[current_day].L4}</td>
+				<td>${bells.L4[0]}:${bells.L4[1]}</td>
+				<td>${bells.L4[2]}:${bells.L4[3]}</td>
+			</tr>
+
+			<tr>
+				<td>5</td>
+				<td style="text-align:left">${schedule[current_day].L5}</td>
+				<td>${bells.L5[0]}:${bells.L5[1]}</td>
+				<td>${bells.L5[2]}:${bells.L5[3]}</td>
+			</tr>	
+
+			<tr>
+				<td>6</td>
+				<td style="text-align:left">${schedule[current_day].L6}</td>
+				<td>${bells.L6[0]}:${bells.L6[1]}</td>
+				<td>${bells.L6[2]}:${bells.L6[3]}</td>
+			</tr>
+
+			<tr>
+				<td>7</td>
+				<td style="text-align:left">${schedule[current_day].L7}</td>
+				<td>${bells.L7[0]}:${bells.L7[1]}</td>
+				<td>${bells.L7[2]}:${bells.L7[3]}</td>
+			</tr>	
+
+			<tr>
+				<td>8</td>
+				<td style="text-align:left">${schedule[current_day].L8}</td>
+				<td>${bells.L8[0]}:${bells.L8[1]}</td>
+				<td>${bells.L8[2]}:${bells.L8[3]}</td>
+			</tr>
+		</table>
+
+		<br><span style="color:#555;font-style:italic;margin:10px">Натисніть ліву клавішу миші</span>
+	`;
+        }
+
+        function checkLesson() {
+            ref_root.style.justifyContent = "center";
+            // Перевіряємо розклад уроків кожну секунду
+            checker = setInterval(() => {
+                ref_root.style.backgroundColor = "transparent";
+
+                // Пропускаємо уроки, які не мають назви
+                while (schedule[current_day][lesson] === "") {
+                    number_lesson++;
+                    lesson = "L" + number_lesson;
+                }
+
+                // Якщо номер уроку перевищує кількість уроків у розкладі, то виводимо повідомлення і зупиняємо перевірку
+                if (number_lesson == Object.keys(schedule[current_day]).length) {
+                    ref_root.innerHTML = "Уроків на сьогодні немає";
+                    clearInterval(checker);
+                    return;
+                }
+
+                // Отримуємо поточний час та час початку і закінчення уроку
+                const date_now = new Date();
+                const time_now = date_now.getHours() * 60 + date_now.getMinutes();
+                const lesson_start = Number(bells[lesson][0]) * 60 + Number(bells[lesson][1]);
+                const lesson_end = Number(bells[lesson][2]) * 60 + Number(bells[lesson][3]);
+
+                // Якщо поточний час менший за час початку уроку, то виводимо повідомлення про залишок часу до початку уроку
+                if (time_now < lesson_start) {
+                    ref_root.innerHTML = `
+			<div>
+				<span style="color:#777">${number_lesson}.</span> <span>${schedule[current_day][lesson]} о ${bells[lesson][0]}:${bells[lesson][1]}</span> 
+				<br> 
+				<span>До початку уроку: ${lesson_start - time_now} хв</span>
+			</div>
 		`;
+                }
+
+                // Якщо поточний час знаходиться в межах уроку, то виводимо повідомлення про залишок часу до закінчення уроку
+                if (time_now >= lesson_start && time_now < lesson_end) {
+                    ref_root.innerHTML = `Залишилось: ${lesson_end - time_now} хв`;
+
+                    if (lesson_end - time_now > 5) {
+                        ref_root.style.color = "#00aa00";
+                    } else {
+                        ref_root.style.color = "#f1b307ff";
+                    }
+                }
+
+                // Якщо поточний час більший або рівний часу закінчення уроку, то переходимо до наступного уроку
+                if (time_now >= lesson_end) {
+                    number_lesson++;
+                    lesson = "L" + number_lesson;
+
+                    ref_root.style.backgroundColor = "red";
+                    ref_root.style.color = "#ccc";
+
+                    return;
+                }
+            }, 1000);
+        }
+
+        showSchedule();
+
+        document.addEventListener("click", () => {
+            ref_root.innerHTML = "Завантаження...";
+
+            if (is_schedule_shown) {
+                checkLesson();
+            } else {
+                clearInterval(checker);
+                showSchedule();
             }
 
-            if (time_now >= lesson_start && time_now < lesson_end) {
-                ref_root.innerHTML = `Залишилось: ${lesson_end - time_now} хв`;
-            }
-
-            if (time_now >= lesson_end) {
-                number_lesson++;
-                lesson = "L" + number_lesson;
-
-                ref_root.style.backgroundColor = "red";
-
-                return;
-            }
-        }, 1000);
+            is_schedule_shown = !is_schedule_shown;
+        });
 
     </script>
 </body>
