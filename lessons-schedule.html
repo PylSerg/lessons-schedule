@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="uk-UA">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Назва сторінки -->
+    <title>Розклад уроків</title>
+
+    <!-- Стилізація -->
+    <style>
+        body {
+            /* колір фону */
+            background-color: #1c1c1c;
+
+            /* колір тексту */
+            color: #ccc;
+
+            /* розмір шрифту */
+            font-size: 16px;
+
+            /* жирність шрифту */
+            font-weight: 700;
+
+            /* міжрядковий інтервал */
+            line-height: 1.5;
+
+            /* вирівнювання тексту */
+            text-align: center;
+
+            /* шрифт */
+            font-family: Arial, Helvetica, sans-serif;
+
+            /* відступи */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="root">Перевірка...</div>
+
+    <script>
+
+        // Розклад уроків
+        const schedule = {
+
+            // Понеділок
+            Monday: {
+                L0: "",
+                L1: "",
+                L2: "",
+                L3: "",
+                L4: "",
+                L5: "",
+                L6: "",
+                L7: "",
+                L8: "",
+            },
+
+            // Вівторок
+            Tuesday: {
+                L0: "",
+                L1: "",
+                L2: "",
+                L3: "",
+                L4: "",
+                L5: "",
+                L6: "",
+                L7: "",
+                L8: "",
+            },
+
+            // Середа
+            Wednesday: {
+                L0: "",
+                L1: "",
+                L2: "",
+                L3: "",
+                L4: "",
+                L5: "",
+                L6: "",
+                L7: "",
+                L8: "",
+            },
+
+            // Четвер
+            Thursday: {
+                L0: "",
+                L1: "",
+                L2: "",
+                L3: "",
+                L4: "",
+                L5: "",
+                L6: "",
+                L7: "",
+                L8: "",
+            },
+
+            // П'ятниця
+            Friday: {
+                L0: "",
+                L1: "",
+                L2: "",
+                L3: "",
+                L4: "",
+                L5: "",
+                L6: "",
+                L7: "",
+                L8: "",
+            },
+
+            // Субота
+            Saturday: {
+                L0: "",
+                L1: "",
+                L2: "",
+                L3: "",
+                L4: "",
+                L5: "",
+                L6: "",
+                L7: "",
+                L8: "",
+            },
+
+            // Неділя
+            Sunday: {
+                L0: "",
+                L1: "",
+                L2: "",
+                L3: "",
+                L4: "",
+                L5: "",
+                L6: "",
+                L7: "",
+                L8: "",
+            },
+        };
+
+        // Розклад дзвінків
+        // Формат: ["година початку", "хвилина початку", "година закінчення", "хвилина закінчення"]
+        const bells = {
+            L0: ["15", "25", "15", "55"],
+            L1: ["16", "00", "16", "30"],
+            L2: ["16", "35", "17", "05"],
+            L3: ["17", "10", "17", "40"],
+            L4: ["17", "45", "18", "15"],
+            L5: ["18", "20", "18", "50"],
+            L6: ["18", "55", "19", "25"],
+            L7: ["19", "30", "20", "00"],
+            L8: ["20", "05", "20", "35"],
+        };
+
+
+        // Скрипт для відображення розкладу уроків
+        const ref_root = document.getElementById("root");
+
+        const date = new Date();
+        const day_names = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+        const current_day = day_names[date.getDay()];
+
+        let number_lesson = 0;
+        let lesson = "L" + number_lesson;
+
+        const checker = setInterval(() => {
+            ref_root.style.backgroundColor = "transparent";
+
+            while (schedule[current_day][lesson] === "") {
+                number_lesson++;
+                lesson = "L" + number_lesson;
+            }
+
+            if (number_lesson == Object.keys(schedule[current_day]).length) {
+                ref_root.innerHTML = "Уроків на сьогодні немає";
+                clearInterval(checker);
+                return;
+            }
+
+            const date_now = new Date();
+            const time_now = date_now.getHours() * 60 + date_now.getMinutes();
+            const lesson_start = Number(bells[lesson][0]) * 60 + Number(bells[lesson][1]);
+            const lesson_end = Number(bells[lesson][2]) * 60 + Number(bells[lesson][3]);
+
+            if (time_now < lesson_start) {
+                ref_root.innerHTML = `
+			${schedule[current_day][lesson]} о ${bells[lesson][0]}:${bells[lesson][1]} 
+			<br> 
+			До початку уроку: ${lesson_start - time_now} хв
+		`;
+            }
+
+            if (time_now >= lesson_start && time_now < lesson_end) {
+                ref_root.innerHTML = `Залишилось: ${lesson_end - time_now} хв`;
+            }
+
+            if (time_now >= lesson_end) {
+                number_lesson++;
+                lesson = "L" + number_lesson;
+
+                ref_root.style.backgroundColor = "red";
+
+                return;
+            }
+        }, 1000);
+
+    </script>
+</body>
+
+</html>
