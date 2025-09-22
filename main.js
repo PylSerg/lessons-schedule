@@ -111,6 +111,10 @@ const current_day = day_names[date.getDay()];
 let number_lesson = 0;
 let lesson = "L" + number_lesson;
 
+console.log(window.clientInformation.userAgentData.mobile)
+
+if (window.clientInformation.userAgentData.mobile) ref_root.style.fontSize = "10vh";
+
 function showSchedule() {
 	ref_root.style.justifyContent = "start";
 	ref_root.style.color = "#ccc";
